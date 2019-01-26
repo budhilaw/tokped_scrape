@@ -1,5 +1,6 @@
 import requests
 import json
+import csv
 from bs4 import BeautifulSoup
 
 
@@ -23,7 +24,7 @@ class Scrape:
             return
 
         #
-        # PRODUCTS = GET_PRODUCT['data']['products']
+        PRODUCTS = GET_PRODUCT['data']['products']
         # for product in PRODUCTS:
         #     print('Product name: {}'.format(product['name']))
         #
@@ -32,8 +33,10 @@ class Scrape:
         # Just write a code like above then you either save it on .csv or json format
         #
 
-        print('Saving hTML page..')
-        self.SAVE_PAGE(SOUP.prettify())
+        # print('Saving hTML page..')
+        # self.SAVE_PAGE(SOUP.prettify())
+        print('Saving to csv file..')
+        self.SAVE_TO_CSV(PRODUCTS)
 
         print('Complete...')
 
@@ -67,6 +70,28 @@ class Scrape:
             return RESULT
         except:
             return False
+
+    def SAVE_TO_CSV(self, PRODUCTS):
+        with open('new_wc.csv', 'w') as new_file:
+            fieldnames = ['nama', 'visible', 'stok', 'harga normal', 'kategori', 'gambar']
+
+            keys = PRODUCTS[0].keys()
+
+            csv_writer = csv.DictWriter(new_file, fieldnames=fieldnames)
+
+            csv_writer.writeheader()
+
+            for product in PRODUCTS:
+                new_dict = {
+                    'nama': product['name'],
+                    'visible': 'visible',
+                    'stok': product['stock'],
+                    'harga normal': product['price'],
+                    'kategori': product['department_name'],
+                    'gambar': product['image_url_700']
+                };
+                csv_writer.writerow(new_dict)
+
 
 
 URL = input('Paste the profile URL here:')
